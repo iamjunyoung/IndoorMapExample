@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 29
     defaultConfig {
-        minSdkVersion 17
+        minSdkVersion 26
         targetSdkVersion 27
         applicationId "com.davemorrissey.labs.subscaleview.test"
     }
@@ -12,6 +12,10 @@ android {
         main {
             assets.srcDirs = ['assets']
         }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 }
 

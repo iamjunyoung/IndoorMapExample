@@ -19,7 +19,9 @@
 
     </RelativeLayout>
 
-    <com.davemorrissey.labs.subscaleview.test.extension.views.PinView style="@style/mainPanel" android:id="@+id/imageView"/>
+    <com.davemorrissey.labs.subscaleview.test.extension.views.PinView
+        style="@style/mainPanel"
+        android:id="@+id/imageView"/>
 
     <ImageView
         android:id="@+id/trash"

@@ -3,13 +3,18 @@ package com.davemorrissey.labs.subscaleview.test.animation;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import android.util.Log;
 import android.view.GestureDetector;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -22,15 +27,16 @@ import com.davemorrissey.labs.subscaleview.test.R.id;
 import com.davemorrissey.labs.subscaleview.test.eventhandlingadvanced.AdvancedEventHandlingActivity;
 import com.davemorrissey.labs.subscaleview.test.extension.views.PinView;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView.*;
 import static com.davemorrissey.labs.subscaleview.test.R.string.*;
 import static com.davemorrissey.labs.subscaleview.test.R.layout.*;
 
 public class AnimationActivity extends AbstractPagesActivity {
-
     private PinView view;
     ///
     private View mView;
@@ -44,6 +50,9 @@ public class AnimationActivity extends AbstractPagesActivity {
 
     int x;
     int y;
+
+    //
+    private PopupWindow mPopupWindow ;
 
     public AnimationActivity() {
         super(animation_title, animation_activity, Arrays.asList(
@@ -62,14 +71,46 @@ public class AnimationActivity extends AbstractPagesActivity {
         });
         view = findViewById(id.imageView);
         view.setImage(ImageSource.asset("LGSPEV_W2_B1.png"));
+
+        //
+        View popupView = getLayoutInflater().inflate(layout_for_always_on_top, null);
+        mPopupWindow = new PopupWindow(popupView, LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        //popupView 에서 (LinearLayout 을 사용) 레이아웃이 둘러싸고 있는 컨텐츠의 크기 만큼 팝업 크기를 지정
+        mPopupWindow.setFocusable(true);
+        // 외부 영역 선택히 PopUp 종료
+        mPopupWindow.showAtLocation(popupView, Gravity.CENTER, 100, 100);
+        //https://puzzleleaf.tistory.com/48
+        //
         final GestureDetector gestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
             @Override
             public boolean onSingleTapConfirmed(MotionEvent e) {
                 if (view.isReady()) {
                     PointF sCoord = view.viewToSourceCoord(e.getX(), e.getY());
-                    Toast.makeText(getApplicationContext(), "Single tap: " + ((int)sCoord.x) + ", " + ((int)sCoord.y), Toast.LENGTH_SHORT).show();
-                    //x = (int)sCoord.x;
-                    //y = (int)sCoord.y;
+                    //Toast.makeText(getApplicationContext(), "Single tap: " + ((int)sCoord.x) + ", " + ((int)sCoord.y), Toast.LENGTH_SHORT).show();
+                    x = (int)sCoord.x;
+                    y = (int)sCoord.y;
+                    //boolean check = isTouchingPOI(sCoord.x, sCoord.y);
+
+                    int ret = nearestPOIFromAll(sCoord.x, sCoord.y);
+                    if (ret != -1) {
+                        if (Math.abs(sCoord.x - view.sPinList.get(ret).x) < 30 && Math.abs(sCoord.y - view.sPinList.get(ret).y) < 30) {
+                            Log.d("JYN", "Nearest poi index is " + ret + " " + view.sPinList.get(ret).x + ", " + view.sPinList.get(ret).y
+                                    + " from your touch (" + (int)sCoord.x + ", " + (int)sCoord.y);
+                            focusByPosition(new PointF(view.sPinList.get(ret).x, view.sPinList.get(ret).y));
+
+                            Toast.makeText(getApplicationContext(), "Nearest poi index is "
+                                    + ret + " " + view.sPinList.get(ret).x + ", " + view.sPinList.get(ret).y
+                                    + " from your touch (" + (int)sCoord.x + ", " + (int)sCoord.y, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    //mView.setTranslationX(e.getX()); // mView가 사용하는 x, y 와 <--> 지도상에서 사용하는 sCoord.x, sCoord.y를 잘 변환하면 될 것 같음
+                    //mView.setTranslationY(e.getY());
+                    //mView.setTranslationX(e2.getRawX() - mMotionDownX);
+                    //mView.setTranslationY(e2.getRawY() - mMotionDownY);
+
+                    showAllCurrentPOILocation();
+
                 } else {
                     Toast.makeText(getApplicationContext(), "Single tap: Image not ready", Toast.LENGTH_SHORT).show();
                 }
@@ -84,8 +125,8 @@ public class AnimationActivity extends AbstractPagesActivity {
                     y = (int)sCoord.y;
                     play();
 
-                    mView.setTranslationX(x); // mView가 사용하는 x, y 와 <--> 지도상에서 사용하는 sCoord.x, sCoord.y를 잘 변환하면 될 것 같음
-                    mView.setTranslationY(y);
+                    //mView.setTranslationX(vX); // mView가 사용하는 x, y 와 <--> 지도상에서 사용하는 sCoord.x, sCoord.y를 잘 변환하면 될 것 같음
+                    //mView.setTranslationY(vY);
                 } else {
                     Toast.makeText(getApplicationContext(), "Long press: Image not ready", Toast.LENGTH_SHORT).show();
                 }
@@ -143,9 +184,28 @@ public class AnimationActivity extends AbstractPagesActivity {
             float minScale = view.getMinScale();
             float scale = (random.nextFloat() * (maxScale - minScale)) + minScale;
             //PointF center = new PointF(random.nextInt(view.getSWidth()), random.nextInt(view.getSHeight()));
-            Log.d("JYN", "play to (" + x + "," + y);
+            Log.d("JYN", "play to (" + x + "," + y + ")");
             PointF center = new PointF(x, y);
             view.setPin(center);
+
+            AnimationBuilder animationBuilder = view.animateScaleAndCenter(scale, center);
+            if (getPage() == 3) {
+                animationBuilder.withDuration(2000).withEasing(EASE_OUT_QUAD).withInterruptible(false).start();
+            } else {
+                animationBuilder.withDuration(750).start();
+            }
+        }
+    }
+
+    private void focusByPosition(PointF p) {
+        Random random = new Random();
+        if (view.isReady()) {
+            float maxScale = view.getMaxScale();
+            float minScale = view.getMinScale();
+            float scale = (random.nextFloat() * (maxScale - minScale)) + minScale;
+            Log.d("JYN", "focusByPosition to (" + p.x + "," + p.y + ")");
+            PointF center = new PointF(p.x, p.y);
+
             AnimationBuilder animationBuilder = view.animateScaleAndCenter(scale, center);
             if (getPage() == 3) {
                 animationBuilder.withDuration(2000).withEasing(EASE_OUT_QUAD).withInterruptible(false).start();
@@ -193,9 +253,10 @@ public class AnimationActivity extends AbstractPagesActivity {
             public boolean onDown(MotionEvent e) {
                 mMotionDownX = e.getRawX() - mView.getTranslationX();
                 mMotionDownY = e.getRawY() - mView.getTranslationY();
-                Toast.makeText(AnimationActivity.this, "" + mMotionDownY + " " + mMotionDownY
-                        + "/" + e.getRawX() +"," + e.getRawY()
-                        + "/" + mView.getTranslationX() + "," + mView.getTranslationY(), Toast.LENGTH_LONG).show();
+                Toast.makeText(AnimationActivity.this, "icon touch "
+                        + mMotionDownY + "," + mMotionDownY
+                        + "\n" + e.getRawX() +"," + e.getRawY()
+                        + "\n" + mView.getTranslationX() + "," + mView.getTranslationY(), Toast.LENGTH_LONG).show();
                 return true;
             }
 
@@ -203,13 +264,13 @@ public class AnimationActivity extends AbstractPagesActivity {
             public boolean onSingleTapUp(MotionEvent e) {
                 return true;
             }
-
             @Override
             public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
                 mIsScrolling = true;
                 trash.setVisibility(View.VISIBLE);
                 mView.setTranslationX(e2.getRawX() - mMotionDownX);
                 mView.setTranslationY(e2.getRawY() - mMotionDownY);
+                Log.d("JYN", "onScroll " + (e2.getRawX() - mMotionDownX) + "," + (e2.getRawY() - mMotionDownY));
                 return true;
             }
         };
@@ -220,5 +281,73 @@ public class AnimationActivity extends AbstractPagesActivity {
         view.getLocationOnScreen(location);
         outRect.offset(location[0], location[1]);
         return outRect.contains(x, y);
+    }
+
+    /////
+    /*
+    ArrayList<Integer> candidateList = new ArrayList<>();
+    public boolean isTouchingPOI(float x, float y) {
+        boolean ret = false;
+        Log.d("JYN", "isTouchingPOI in total size " + view.sPinList.size());
+
+        for (int i = 0 ; i < view.sPinList.size() ; i++){
+            PointF p = view.sPinList.get(i);
+            //if (x > p.x - 3 && x < p.x + 3 && y > p.y - 4 && y < p.y + 4) {
+            if (x > p.x - 6 && x < p.x + 6 && y > p.y - 6 && y < p.y + 6) {
+                Log.d("JYN", "You touch poi of " + i);
+                candidateList.add(i);
+                ret = true;
+            } else {
+                Log.d("JYN", "yayayayayay " + i);
+            }
+        }
+        return ret;
+    }
+
+    public int nearestPOI(float x, float y) { // touch position
+        int ret = -1;
+
+        double min = Double.MAX_VALUE;
+        for (int i = 0 ; i < candidateList.size() ; i++) {
+            float x1 = view.sPinList.get(candidateList.get(i)).x;
+            float y1 = view.sPinList.get(candidateList.get(i)).y;
+            double dist = getDistance(x, y, x1, y1);
+            if (min > dist) {
+                min = dist;
+                ret = candidateList.get(i);
+            }
+        }
+        candidateList.clear();
+        return ret;
+    }
+    */
+
+    public int nearestPOIFromAll(float x, float y) { // touch position
+        int ret = -1;
+
+        double min = Double.MAX_VALUE;
+        for (int i = 0 ; i < view.sPinList.size() ; i++) {
+            PointF p = view.sPinList.get(i);
+            double dist = getDistance(x, y, p.x, p.y);
+            if (min > dist) {
+                min = dist;
+                ret = i;
+            }
+        }
+        return ret;
+    }
+
+    static double getDistance(float x, float y, float x1, float y1) {
+        double d;
+        double xd, yd;
+        yd = Math.pow((y1-y), 2);
+        xd = Math.pow((x1-x), 2);
+        d = Math.sqrt(yd + xd);
+        return d;
+    }
+
+    public void showAllCurrentPOILocation() {
+        AtomicInteger i = new AtomicInteger();
+        view.sPinList.stream().forEach( x -> Log.d("JYN", "show all " + x + " " + i.getAndIncrement()));
     }
 }
