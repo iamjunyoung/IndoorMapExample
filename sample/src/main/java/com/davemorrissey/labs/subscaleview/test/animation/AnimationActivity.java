@@ -1,5 +1,6 @@
 package com.davemorrissey.labs.subscaleview.test.animation;
 
+import android.content.Context;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.os.Bundle;
@@ -10,8 +11,10 @@ import androidx.annotation.Nullable;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
@@ -51,6 +54,7 @@ public class AnimationActivity extends AbstractPagesActivity {
     int x;
     int y;
 
+    LayoutInflater inflater;
     //
     private PopupWindow mPopupWindow ;
 
@@ -72,14 +76,9 @@ public class AnimationActivity extends AbstractPagesActivity {
         view = findViewById(id.imageView);
         view.setImage(ImageSource.asset("LGSPEV_W2_B1.png"));
 
+        inflater = (LayoutInflater) AnimationActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         //
-        View popupView = getLayoutInflater().inflate(layout_for_always_on_top, null);
-        mPopupWindow = new PopupWindow(popupView, LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        //popupView 에서 (LinearLayout 을 사용) 레이아웃이 둘러싸고 있는 컨텐츠의 크기 만큼 팝업 크기를 지정
-        mPopupWindow.setFocusable(true);
-        // 외부 영역 선택히 PopUp 종료
-        mPopupWindow.showAtLocation(popupView, Gravity.CENTER, 100, 100);
-        //https://puzzleleaf.tistory.com/48
+
         //
         final GestureDetector gestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
             @Override
@@ -101,6 +100,9 @@ public class AnimationActivity extends AbstractPagesActivity {
                             Toast.makeText(getApplicationContext(), "Nearest poi index is "
                                     + ret + " " + view.sPinList.get(ret).x + ", " + view.sPinList.get(ret).y
                                     + " from your touch (" + (int)sCoord.x + ", " + (int)sCoord.y, Toast.LENGTH_SHORT).show();
+
+                            ////
+
                         }
                     }
 
@@ -124,6 +126,20 @@ public class AnimationActivity extends AbstractPagesActivity {
                     x = (int)sCoord.x;
                     y = (int)sCoord.y;
                     play();
+
+                    PointF center = new PointF(x, y+20);
+                    View popupView = inflater.inflate(layout_for_always_on_top, null);
+                    mPopupWindow = new PopupWindow(popupView, LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                    //view.setPopupWindow(popupView, mPopupWindow, center);
+
+
+                    //popupView 에서 (LinearLayout 을 사용) 레이아웃이 둘러싸고 있는 컨텐츠의 크기 만큼 팝업 크기를 지정
+                    mPopupWindow.setFocusable(true);
+                    // 외부 영역 선택히 PopUp 종료
+                    mPopupWindow.showAtLocation(popupView, Gravity.CENTER, 123, 123);
+
+                    //https://puzzleleaf.tistory.com/48
+
 
                     //mView.setTranslationX(vX); // mView가 사용하는 x, y 와 <--> 지도상에서 사용하는 sCoord.x, sCoord.y를 잘 변환하면 될 것 같음
                     //mView.setTranslationY(vY);
