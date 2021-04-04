@@ -20,8 +20,7 @@ public class PinView extends SubsamplingScaleImageView { //SubsamplingScaleImage
     private final PointF vPin = new PointF();
     public ArrayList<PointF> sPinList;
     //private PointF sPin;
-    public ArrayList<Bitmap> poiBitmapList;
-    private Bitmap pin; //-> bitmap 배열 또는 class정의할 것.
+    public ArrayList<Bitmap> poiBitmapList; // private Bitmap pin; -> bitmap 배열 또는 class정의 함.
     //private ImageView imageView;
     private Context contex;
 

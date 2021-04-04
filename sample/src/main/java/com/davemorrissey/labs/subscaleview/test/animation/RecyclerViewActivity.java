@@ -4,22 +4,19 @@ import android.content.Context;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
+
+import androidx.annotation.Nullable;
 
 import com.davemorrissey.labs.subscaleview.ImageSource;
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView.AnimationBuilder;
@@ -27,19 +24,30 @@ import com.davemorrissey.labs.subscaleview.test.AbstractPagesActivity;
 import com.davemorrissey.labs.subscaleview.test.Page;
 import com.davemorrissey.labs.subscaleview.test.R;
 import com.davemorrissey.labs.subscaleview.test.R.id;
-import com.davemorrissey.labs.subscaleview.test.eventhandlingadvanced.AdvancedEventHandlingActivity;
 import com.davemorrissey.labs.subscaleview.test.extension.views.PinView;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView.*;
-import static com.davemorrissey.labs.subscaleview.test.R.string.*;
-import static com.davemorrissey.labs.subscaleview.test.R.layout.*;
+import static com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView.EASE_OUT_QUAD;
+import static com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView.OnClickListener;
+import static com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView.OnTouchListener;
+import static com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView.PAN_LIMIT_CENTER;
+import static com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView.PAN_LIMIT_INSIDE;
+import static com.davemorrissey.labs.subscaleview.test.R.layout.animation_activity;
+import static com.davemorrissey.labs.subscaleview.test.R.layout.layout_for_always_on_top;
+import static com.davemorrissey.labs.subscaleview.test.R.string.animation_p1_subtitle;
+import static com.davemorrissey.labs.subscaleview.test.R.string.animation_p1_text;
+import static com.davemorrissey.labs.subscaleview.test.R.string.animation_p2_subtitle;
+import static com.davemorrissey.labs.subscaleview.test.R.string.animation_p2_text;
+import static com.davemorrissey.labs.subscaleview.test.R.string.animation_p3_subtitle;
+import static com.davemorrissey.labs.subscaleview.test.R.string.animation_p3_text;
+import static com.davemorrissey.labs.subscaleview.test.R.string.animation_p4_subtitle;
+import static com.davemorrissey.labs.subscaleview.test.R.string.animation_p4_text;
+import static com.davemorrissey.labs.subscaleview.test.R.string.animation_title;
 
-public class AnimationActivity extends AbstractPagesActivity {
+public class RecyclerViewActivity extends AbstractPagesActivity {
     private PinView view;
     ///
     private View mView;
@@ -58,7 +66,7 @@ public class AnimationActivity extends AbstractPagesActivity {
     //
     private PopupWindow mPopupWindow ;
 
-    public AnimationActivity() {
+    public RecyclerViewActivity() {
         super(animation_title, animation_activity, Arrays.asList(
                 new Page(animation_p1_subtitle, animation_p1_text),
                 new Page(animation_p2_subtitle, animation_p2_text),
@@ -71,12 +79,12 @@ public class AnimationActivity extends AbstractPagesActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         findViewById(id.play).setOnClickListener(new OnClickListener() {
-            @Override public void onClick(View v) { AnimationActivity.this.play(); }
+            @Override public void onClick(View v) { RecyclerViewActivity.this.play(); }
         });
         view = findViewById(id.imageView);
         view.setImage(ImageSource.asset("LGSPEV_W2_B1.png"));
 
-        inflater = (LayoutInflater) AnimationActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        inflater = (LayoutInflater) RecyclerViewActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         //
 
         //
@@ -159,20 +167,20 @@ public class AnimationActivity extends AbstractPagesActivity {
             }
         });
         //view.setImage(ImageSource.asset("sanmartino.jpg"));
-        view.setOnTouchListener(new View.OnTouchListener() {
+        view.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 return gestureDetector.onTouchEvent(motionEvent);
             }
         });
 
-        rl_chatBot = (RelativeLayout) findViewById(R.id.rl_chatBot);
+        rl_chatBot = (RelativeLayout) findViewById(id.rl_chatBot);
         Log.d("JYN", "rl_chatBot " + rl_chatBot);
-        mAvatarIcon = findViewById(R.id.bn_avatar);
-        trash = findViewById(R.id.trash);
+        mAvatarIcon = findViewById(id.bn_avatar);
+        trash = findViewById(id.trash);
 
         mAvatarIcon.setOnTouchListener(new MoveViewTouchListener(rl_chatBot));
-        trash.setOnClickListener(new View.OnClickListener() {
+        trash.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 rl_chatBot.setVisibility(View.VISIBLE);
@@ -229,7 +237,7 @@ public class AnimationActivity extends AbstractPagesActivity {
         }
     }
 
-    public class MoveViewTouchListener implements View.OnTouchListener {
+    public class MoveViewTouchListener implements OnTouchListener {
         private GestureDetector mGestureDetector;
         //private View mView;
 
@@ -267,7 +275,7 @@ public class AnimationActivity extends AbstractPagesActivity {
             public boolean onDown(MotionEvent e) {
                 mMotionDownX = e.getRawX() - mView.getTranslationX();
                 mMotionDownY = e.getRawY() - mView.getTranslationY();
-                Toast.makeText(AnimationActivity.this, "icon touch "
+                Toast.makeText(RecyclerViewActivity.this, "icon touch "
                         + mMotionDownY + "," + mMotionDownY
                         + "\n" + e.getRawX() +"," + e.getRawY()
                         + "\n" + mView.getTranslationX() + "," + mView.getTranslationY(), Toast.LENGTH_LONG).show();

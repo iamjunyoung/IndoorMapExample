@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <variable
+            name="viewModel"
+            type="com.davemorrissey.labs.subscaleview.test.ListViewModel" />
+    </data>
+    <RelativeLayout
+        style="@style/fill">
+
+        <RelativeLayout style="@style/footer" android:id="@+id/footer">
+
+            <ImageView style="@style/previousButton" android:id="@+id/previous" android:contentDescription="@string/button.previous"/>
+
+            <ImageView style="@style/nextButton" android:id="@+id/next" android:contentDescription="@string/button.next"/>
+
+            <ImageView style="@style/footerButton"
+                    android:id="@+id/play"
+                    android:layout_toStartOf="@id/next"
+                    android:src="@drawable/play"
+                    android:contentDescription="@string/button.animate"/>
+
+            <TextView style="@style/footerNote"
+                    android:id="@+id/note"
+                    android:layout_toStartOf="@id/play"
+                    android:layout_toEndOf="@id/previous"/>
+
+        </RelativeLayout>
+
+        <com.davemorrissey.labs.subscaleview.test.extension.views.PinView
+            style="@style/mainPanel"
+            android:id="@+id/imageView"/>
+
+        <ImageView
+            android:id="@+id/trash"
+            android:layout_width="50sp"
+            android:layout_height="50sp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="39dp"
+            android:background="@drawable/open"
+            android:padding="5dp"
+            android:visibility="gone" />
+
+        <RelativeLayout
+            android:id="@+id/rl_chatBot"
+            android:layout_width="match_parent"
+            android:layout_height="130dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true">
+
+            <pl.droidsonroids.gif.GifImageView
+                android:id="@+id/bn_avatar"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_alignParentRight="true"
+                android:background="@drawable/pin" />
+        </RelativeLayout>
+    </RelativeLayout>
+</layout>
