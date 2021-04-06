@@ -22,6 +22,7 @@
     <activity android:name=".eventhandlingadvanced.AdvancedEventHandlingActivity"/>
     <activity android:name=".viewpager.ViewPagerActivity"/>
     <activity android:name=".animation.AnimationActivity"/>
+    <activity android:name=".animation.RecyclerViewActivity"/>
     <activity android:name=".extension.ExtensionActivity"/>
     <activity android:name=".configuration.ConfigurationActivity"/>
 </application>

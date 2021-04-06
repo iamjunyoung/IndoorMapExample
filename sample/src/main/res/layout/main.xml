@@ -26,6 +26,8 @@
             <View style="@style/indexDivider"/>
             <TextView style="@style/indexLink" android:id="@+id/animation" android:text="@string/animation.link"/>
             <View style="@style/indexDivider"/>
+            <TextView style="@style/indexLink" android:id="@+id/animation2" android:text="@string/animation.link.2"/>
+            <View style="@style/indexDivider"/>
             <TextView style="@style/indexLink" android:id="@+id/extension" android:text="@string/extension.link"/>
             <View style="@style/indexDivider"/>
             <TextView style="@style/indexLink" android:id="@+id/configuration" android:text="@string/configuration.link"/>

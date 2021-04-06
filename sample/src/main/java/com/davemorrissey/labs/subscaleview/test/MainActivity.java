@@ -9,6 +9,7 @@ import android.view.View;
 
 import com.davemorrissey.labs.subscaleview.test.R.id;
 import com.davemorrissey.labs.subscaleview.test.animation.AnimationActivity;
+import com.davemorrissey.labs.subscaleview.test.animation.RecyclerViewActivity;
 import com.davemorrissey.labs.subscaleview.test.basicfeatures.BasicFeaturesActivity;
 import com.davemorrissey.labs.subscaleview.test.configuration.ConfigurationActivity;
 import com.davemorrissey.labs.subscaleview.test.eventhandling.EventHandlingActivity;
@@ -33,6 +34,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         findViewById(id.advancedEventHandling).setOnClickListener(this);
         findViewById(id.viewPagerGalleries).setOnClickListener(this);
         findViewById(id.animation).setOnClickListener(this);
+        findViewById(id.animation2).setOnClickListener(this);
         findViewById(id.extension).setOnClickListener(this);
         findViewById(id.configuration).setOnClickListener(this);
         findViewById(id.github).setOnClickListener(this);
@@ -47,6 +49,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
             case id.advancedEventHandling: startActivity(AdvancedEventHandlingActivity.class); break;
             case id.viewPagerGalleries: startActivity(ViewPagerActivity.class); break;
             case id.animation: startActivity(AnimationActivity.class); break;
+            case id.animation2: startActivity(RecyclerViewActivity.class); break;
             case id.extension: startActivity(ExtensionActivity.class); break;
             case id.configuration: startActivity(ConfigurationActivity.class); break;
             case id.github: openGitHub(); break;

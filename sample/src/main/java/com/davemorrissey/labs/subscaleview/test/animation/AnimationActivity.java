@@ -74,6 +74,8 @@ public class AnimationActivity extends AbstractPagesActivity {
             @Override public void onClick(View v) { AnimationActivity.this.play(); }
         });
         view = findViewById(id.imageView);
+        Log.d("JYN", "onCreate AnimationActivity " + view);
+
         view.setImage(ImageSource.asset("LGSPEV_W2_B1.png"));
 
         inflater = (LayoutInflater) AnimationActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);

@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
+import com.davemorrissey.labs.subscaleview.test.BitmapView;
 import com.davemorrissey.labs.subscaleview.test.R;
 import com.davemorrissey.labs.subscaleview.test.R.drawable;
 
@@ -20,20 +21,23 @@ public class PinView extends SubsamplingScaleImageView { //SubsamplingScaleImage
     private final PointF vPin = new PointF();
     public ArrayList<PointF> sPinList;
     //private PointF sPin;
-    public ArrayList<Bitmap> poiBitmapList; // private Bitmap pin; -> bitmap 배열 또는 class정의 함.
+    public ArrayList<Bitmap> poiBitmapList;
+    //public ArrayList<BitmapView> poiBitmapViewList; // <-이걸 쓸 수 있을까?
+
     //private ImageView imageView;
-    private Context contex;
+    private Context context;
 
     public PinView(Context context) {
         this(context, null);
-        this.contex = context;
+        this.context = context;
     }
 
     public PinView(Context context, AttributeSet attr) {
         super(context, attr);
-        this.contex = context;
+        this.context = context;
         sPinList = new ArrayList<>();
         poiBitmapList = new ArrayList<>();
+        //poiBitmapViewList = new ArrayList<>();
 
         //initialise();
     }
@@ -53,7 +57,7 @@ public class PinView extends SubsamplingScaleImageView { //SubsamplingScaleImage
         float h = (density/420f) * pin.getHeight();
         pin = Bitmap.createScaledBitmap(pin, (int)w, (int)h, true);
         poiBitmapList.add(pin);
-
+        //poiBitmapViewList.add(new BitmapView(context));
         Log.d("JYN", "initialise w " + w + "  h " + h);
         /*
         imageView = new ImageView(contex);
@@ -73,6 +77,34 @@ public class PinView extends SubsamplingScaleImageView { //SubsamplingScaleImage
 
         paint.setAntiAlias(true);
 
+        /*
+        if (poiBitmapViewList != null && sPinList != null) {
+            Log.d("JYN", "poiBitmapViewList size " + poiBitmapViewList.size());
+            for (int i = 0; i < poiBitmapViewList.size(); i++) {
+                Bitmap pin = poiBitmapViewList.get(i).getBitmap();
+
+                sourceToViewCoord(sPinList.get(i), vPin);
+                float vX = vPin.x - (pin.getWidth() / 2);
+                float vY = vPin.y - pin.getHeight();
+                //canvas.drawBitmap(pin, vX, vY, paint); // 마지막에 touch된 또는 현재 touch된 애를 가장 마지막에 그려줄 수 있을까?
+
+                float density = getResources().getDisplayMetrics().densityDpi;
+                float width = (density/420f) * pin.getWidth();
+                float height = (density/420f) * pin.getHeight();
+                canvas.drawBitmap(
+                        pin, // 출력할 bitmap
+                        new Rect(0,0, (int)width, (int)height),   // 출력할 bitmap의 지정된 영역을 (sub bitmap)
+                        new Rect((int)vX, (int)vY,(int)(vX + width),(int)(vY + height)),  // 이 영역에 출력한다. (화면을 벗어나면 clipping됨)
+                        paint);
+                Paint textPaint = new Paint();
+                textPaint.setTextSize(70);
+                textPaint.setUnderlineText(true);
+                canvas.drawText("야야야", vX, vY, textPaint);
+                Log.d("JYN", "onDraw vX " + vX + "  vY " + vY + "/" + (pin.getWidth() / 2) + "  " + pin.getHeight());
+            }
+        }
+         */
+
         if (poiBitmapList != null && sPinList != null) {
             //if (sPin != null) {
             //if (sPin != null && pin != null) {
@@ -83,14 +115,28 @@ public class PinView extends SubsamplingScaleImageView { //SubsamplingScaleImage
                 sourceToViewCoord(sPinList.get(i), vPin);
                 float vX = vPin.x - (pin.getWidth() / 2);
                 float vY = vPin.y - pin.getHeight();
-                canvas.drawBitmap(pin, vX, vY, paint); // 마지막에 touch된 또는 현재 touch된 애를 가장 마지막에 그려줄 수 있을까?
+
+                //canvas.drawBitmap(pin, vX, vY, paint); // 마지막에 touch된 또는 현재 touch된 애를 가장 마지막에 그려줄 수 있을까?
+                float density = getResources().getDisplayMetrics().densityDpi;
+                float width = pin.getWidth();
+                float height =  pin.getHeight();
+                //float width = (density/420f) * pin.getWidth();
+                //float height = (density/420f) * pin.getHeight();
+                canvas.drawBitmap(
+                        pin, // 출력할 bitmap
+                        new Rect(0,0, (int)width, (int)height),   // 출력할 bitmap의 지정된 영역을 (sub bitmap)
+                        new Rect((int)vX, (int)vY,(int)(vX + width),(int)(vY + height)),  // 이 영역에 출력한다. (화면을 벗어나면 clipping됨)
+                        paint);
+
+                Paint textPaint = new Paint();
+                textPaint.setTextSize(70);
+                textPaint.setUnderlineText(true);
+                canvas.drawText("야야야", vX, vY, textPaint);
                 Log.d("JYN", "onDraw vX " + vX + "  vY " + vY + "/" + (pin.getWidth() / 2) + "  " + pin.getHeight());
             }
             //imageView.setTranslationX(vX);
             //imageView.setTranslationX(vY);
             //}
         }
-
     }
-
 }

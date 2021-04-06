@@ -17,7 +17,7 @@ public class BitmapView extends View {
     float height;
     int dx;
     int dy;
-    boolean draggableFlog;
+    boolean draggableFlag;
     Context context;
 
     float validDownX = -1;
@@ -54,11 +54,11 @@ public class BitmapView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-
+        Log.d("BitmapView", "onDraw at " + dx + " Y: " + dy);
         canvas.drawBitmap(
                 bitmap, // 출력할 bitmap
                 new Rect(0,0, (int)width, (int)height),   // 출력할 bitmap의 지정된 영역을 (sub bitmap)
-                new Rect(dx,dy,dx + (int)width,dy + (int)height),  // 이 영역에 출력한다. (화면을 벗어나면 clipping됨)
+                new Rect(dx, dy,dx + (int)width,dy + (int)height),  // 이 영역에 출력한다. (화면을 벗어나면 clipping됨)
                 null);
 
         //canvas.drawBitmap(bitmap, 0, 0, null); // 마지막에 touch된 또는 현재 touch된 애를 가장 마지막에 그려줄 수 있을까?
@@ -74,7 +74,7 @@ public class BitmapView extends View {
         switch(event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 if ( x > dx && x < dx + (int)width && y > dy && y < dy + (int)height ) {
-                    draggableFlog = true;
+                    draggableFlag = true;
                     Toast.makeText(context, "Touched at (" + x + ", " + y + ")", Toast.LENGTH_LONG).show();
                     Log.d("TOUCHED", "X: " + x + " Y: " + y);
                     //Bitmap touched
@@ -83,18 +83,18 @@ public class BitmapView extends View {
                     Log.d("validDown", "X: " + validDownX + " Y: " + validDownY);
 
                 } else {
-                    draggableFlog = false;
+                    draggableFlag = false;
                 }
                 break;
             case MotionEvent.ACTION_UP:
-                draggableFlog = false;
+                draggableFlag = false;
                 validDownX = -1;
                 validDownY = -1;
                 break;
             case MotionEvent.ACTION_MOVE:
                 // 주루룩 drag했을 경우 히스토리가 모두 기록되어서 전달됨
                 //if ( x > dx && x < dx + (int)width && y > dy && y < dy + (int)height ) {
-                if (draggableFlog) {
+                if (draggableFlag) {
                     Log.d("ACTION_MOVE", "X: " + x + " Y: " + y);
                     //Bitmap will be moved
 
@@ -131,7 +131,10 @@ public class BitmapView extends View {
                 }
                 break;
         }
-
         return true;
+    }
+
+    public Bitmap getBitmap() {
+        return bitmap;
     }
 }

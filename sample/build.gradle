@@ -11,7 +11,13 @@ android {
     sourceSets {
         main {
             assets.srcDirs = ['assets']
+            java{
+                exclude "**/PinViewAdapter.java"
+            }
         }
+    }
+    dataBinding {
+        enabled = true
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -23,5 +29,7 @@ dependencies {
     implementation project(':library')
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.14'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
 
 }

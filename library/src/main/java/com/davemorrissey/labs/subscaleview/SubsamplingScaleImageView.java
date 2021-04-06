@@ -2155,7 +2155,7 @@ public class SubsamplingScaleImageView extends View {
     /**
      * Convert source to view x coordinate.
      */
-    private float sourceToViewX(float sx) {
+    public float sourceToViewX(float sx) {
         if (vTranslate == null) { return Float.NaN; }
         return (sx * scale) + vTranslate.x;
     }
@@ -2163,7 +2163,7 @@ public class SubsamplingScaleImageView extends View {
     /**
      * Convert source to view y coordinate.
      */
-    private float sourceToViewY(float sy) {
+    public float sourceToViewY(float sy) {
         if (vTranslate == null) { return Float.NaN; }
         return (sy * scale) + vTranslate.y;
     }

@@ -15,12 +15,14 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
-
+import androidx.databinding.BindingAdapter;
 import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.davemorrissey.labs.subscaleview.ImageSource;
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView.AnimationBuilder;
 import com.davemorrissey.labs.subscaleview.test.AbstractPagesActivity;
+import com.davemorrissey.labs.subscaleview.test.AbstractPagesActivity2;
 import com.davemorrissey.labs.subscaleview.test.Page;
 import com.davemorrissey.labs.subscaleview.test.R;
 import com.davemorrissey.labs.subscaleview.test.R.id;
@@ -37,6 +39,7 @@ import static com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView.PAN_
 import static com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView.PAN_LIMIT_INSIDE;
 import static com.davemorrissey.labs.subscaleview.test.R.layout.animation_activity;
 import static com.davemorrissey.labs.subscaleview.test.R.layout.layout_for_always_on_top;
+import static com.davemorrissey.labs.subscaleview.test.R.layout.recyclerview_activity;
 import static com.davemorrissey.labs.subscaleview.test.R.string.animation_p1_subtitle;
 import static com.davemorrissey.labs.subscaleview.test.R.string.animation_p1_text;
 import static com.davemorrissey.labs.subscaleview.test.R.string.animation_p2_subtitle;
@@ -47,8 +50,12 @@ import static com.davemorrissey.labs.subscaleview.test.R.string.animation_p4_sub
 import static com.davemorrissey.labs.subscaleview.test.R.string.animation_p4_text;
 import static com.davemorrissey.labs.subscaleview.test.R.string.animation_title;
 
-public class RecyclerViewActivity extends AbstractPagesActivity {
+public class RecyclerViewActivity extends AbstractPagesActivity2 {
     private PinView view;
+    private PinView view2;
+    private PinView view3;
+    private PinView view4;
+
     ///
     private View mView;
     private RelativeLayout rl_chatBot;
@@ -67,7 +74,7 @@ public class RecyclerViewActivity extends AbstractPagesActivity {
     private PopupWindow mPopupWindow ;
 
     public RecyclerViewActivity() {
-        super(animation_title, animation_activity, Arrays.asList(
+        super(animation_title, recyclerview_activity, Arrays.asList(
                 new Page(animation_p1_subtitle, animation_p1_text),
                 new Page(animation_p2_subtitle, animation_p2_text),
                 new Page(animation_p3_subtitle, animation_p3_text),
@@ -78,16 +85,26 @@ public class RecyclerViewActivity extends AbstractPagesActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        /*
         findViewById(id.play).setOnClickListener(new OnClickListener() {
             @Override public void onClick(View v) { RecyclerViewActivity.this.play(); }
         });
-        view = findViewById(id.imageView);
+         */
+        view = findViewById(id.imageView1);
+        Log.d("JYN", "onCreate RecyclerViewActivity " + view);
+
         view.setImage(ImageSource.asset("LGSPEV_W2_B1.png"));
 
-        inflater = (LayoutInflater) RecyclerViewActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        //
+        view2 = findViewById(id.imageView2);
+        view2.setImage(ImageSource.asset("LGSPEV_W2_B1.png"));
 
-        //
+        view3 = findViewById(id.imageView3);
+        view3.setImage(ImageSource.asset("LGSPEV_W2_B1.png"));
+
+        view4 = findViewById(id.imageView4);
+        view4.setImage(ImageSource.asset("LGSPEV_W2_B1.png"));
+        inflater = (LayoutInflater) RecyclerViewActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
         final GestureDetector gestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
             @Override
             public boolean onSingleTapConfirmed(MotionEvent e) {
@@ -98,29 +115,39 @@ public class RecyclerViewActivity extends AbstractPagesActivity {
                     y = (int)sCoord.y;
                     //boolean check = isTouchingPOI(sCoord.x, sCoord.y);
 
-                    int ret = nearestPOIFromAll(sCoord.x, sCoord.y);
+
+                    int ret = nearestPOIFromAll(view, sCoord.x, sCoord.y);
                     if (ret != -1) {
-                        if (Math.abs(sCoord.x - view.sPinList.get(ret).x) < 30 && Math.abs(sCoord.y - view.sPinList.get(ret).y) < 30) {
-                            Log.d("JYN", "Nearest poi index is " + ret + " " + view.sPinList.get(ret).x + ", " + view.sPinList.get(ret).y
-                                    + " from your touch (" + (int)sCoord.x + ", " + (int)sCoord.y);
-                            focusByPosition(new PointF(view.sPinList.get(ret).x, view.sPinList.get(ret).y));
+                        Log.d("JYN", "Nearest ex : " + e.getX() + "  ey " + e.getY() );
+                        Log.d("JYN", "Nearest poi index is " + ret + " " + view.sourceToViewX(view.sPinList.get(ret).x) + ", " + view.sourceToViewY(view.sPinList.get(ret).y)
+                                + " from your touch (" + (int)sCoord.x + ", " + (int)sCoord.y);
+                        Log.d("JYN", "Nearest w : " + view.poiBitmapList.get(ret).getWidth()/2 + " h : " + view.poiBitmapList.get(ret).getHeight() + "  "
+                                + (view.sPinList.get(ret).x - view.poiBitmapList.get(ret).getWidth()/2) + "  "
+                                + (view.sPinList.get(ret).x + view.poiBitmapList.get(ret).getWidth()/2));
+
+                        if (sCoord.x >= view.sPinList.get(ret).x - 2
+                                && sCoord.x <= view.sPinList.get(ret).x + 2
+                                && sCoord.y <= view.sPinList.get(ret).y + 2
+                                && sCoord.y >= view.sPinList.get(ret).y - 5) {
+
+                        /*
+                        if (sCoord.x >= view.sPinList.get(ret).x - view.poiBitmapList.get(ret).getWidth()/2
+                                && sCoord.x <= view.sPinList.get(ret).x + view.poiBitmapList.get(ret).getWidth()/2
+                                && sCoord.y <= view.sPinList.get(ret).y
+                                && sCoord.y >= view.sPinList.get(ret).y - view.poiBitmapList.get(ret).getHeight()) {
+                         */
+                        //if (Math.abs(sCoord.x - view.sPinList.get(ret).x) < 30 && Math.abs(sCoord.y - view.sPinList.get(ret).y) < 30) {
+                            //                if ( x > dx && x < dx + (int)width && y > dy && y < dy + (int)height ) {
+                            Log.d("JYN", "inside");
+                            focusByPosition(view, new PointF(view.sPinList.get(ret).x, view.sPinList.get(ret).y));
 
                             Toast.makeText(getApplicationContext(), "Nearest poi index is "
                                     + ret + " " + view.sPinList.get(ret).x + ", " + view.sPinList.get(ret).y
                                     + " from your touch (" + (int)sCoord.x + ", " + (int)sCoord.y, Toast.LENGTH_SHORT).show();
-
-                            ////
-
                         }
+                        return false;
                     }
-
-                    //mView.setTranslationX(e.getX()); // mView가 사용하는 x, y 와 <--> 지도상에서 사용하는 sCoord.x, sCoord.y를 잘 변환하면 될 것 같음
-                    //mView.setTranslationY(e.getY());
-                    //mView.setTranslationX(e2.getRawX() - mMotionDownX);
-                    //mView.setTranslationY(e2.getRawY() - mMotionDownY);
-
                     showAllCurrentPOILocation();
-
                 } else {
                     Toast.makeText(getApplicationContext(), "Single tap: Image not ready", Toast.LENGTH_SHORT).show();
                 }
@@ -133,7 +160,7 @@ public class RecyclerViewActivity extends AbstractPagesActivity {
                     Toast.makeText(getApplicationContext(), "Long press: " + ((int)sCoord.x) + ", " + ((int)sCoord.y), Toast.LENGTH_SHORT).show();
                     x = (int)sCoord.x;
                     y = (int)sCoord.y;
-                    play();
+                    play(view);
 
                     PointF center = new PointF(x, y+20);
                     View popupView = inflater.inflate(layout_for_always_on_top, null);
@@ -145,10 +172,6 @@ public class RecyclerViewActivity extends AbstractPagesActivity {
                     // 외부 영역 선택히 PopUp 종료
                     mPopupWindow.showAtLocation(popupView, Gravity.CENTER, 123, 123);
 
-                    //https://puzzleleaf.tistory.com/48
-
-                    //mView.setTranslationX(vX); // mView가 사용하는 x, y 와 <--> 지도상에서 사용하는 sCoord.x, sCoord.y를 잘 변환하면 될 것 같음
-                    //mView.setTranslationY(vY);
                 } else {
                     Toast.makeText(getApplicationContext(), "Long press: Image not ready", Toast.LENGTH_SHORT).show();
                 }
@@ -158,15 +181,12 @@ public class RecyclerViewActivity extends AbstractPagesActivity {
                 if (view.isReady()) {
                     PointF sCoord = view.viewToSourceCoord(e.getX(), e.getY());
                     Toast.makeText(getApplicationContext(), "Double tap: " + ((int)sCoord.x) + ", " + ((int)sCoord.y), Toast.LENGTH_SHORT).show();
-                    //x = (int)sCoord.x;
-                    //y = (int)sCoord.y;
                 } else {
                     Toast.makeText(getApplicationContext(), "Double tap: Image not ready", Toast.LENGTH_SHORT).show();
                 }
                 return true;
             }
         });
-        //view.setImage(ImageSource.asset("sanmartino.jpg"));
         view.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -174,20 +194,199 @@ public class RecyclerViewActivity extends AbstractPagesActivity {
             }
         });
 
-        rl_chatBot = (RelativeLayout) findViewById(id.rl_chatBot);
-        Log.d("JYN", "rl_chatBot " + rl_chatBot);
-        mAvatarIcon = findViewById(id.bn_avatar);
-        trash = findViewById(id.trash);
 
-        mAvatarIcon.setOnTouchListener(new MoveViewTouchListener(rl_chatBot));
-        trash.setOnClickListener(new OnClickListener() {
+        final GestureDetector gestureDetector2 = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
             @Override
-            public void onClick(View v) {
-                rl_chatBot.setVisibility(View.VISIBLE);
-                trash.setVisibility(View.GONE);
-                trash.setBackgroundResource(R.drawable.open);
+            public boolean onSingleTapConfirmed(MotionEvent e) {
+                if (view2.isReady()) {
+                    PointF sCoord = view2.viewToSourceCoord(e.getX(), e.getY());
+                    x = (int)sCoord.x;
+                    y = (int)sCoord.y;
+
+                    int ret = nearestPOIFromAll(view2, sCoord.x, sCoord.y);
+                    if (ret != -1) {
+                        if (sCoord.x > view2.sPinList.get(ret).x && sCoord.x < view2.sPinList.get(ret).x + view2.poiBitmapList.get(ret).getWidth()
+                                && sCoord.y > view2.sPinList.get(ret).y && sCoord.y < view2.sPinList.get(ret).y + view2.poiBitmapList.get(ret).getHeight()) {
+                            Log.d("JYN", "Nearest poi index is " + ret + " " + view2.sPinList.get(ret).x + ", " + view2.sPinList.get(ret).y
+                                    + " from your touch (" + (int)sCoord.x + ", " + (int)sCoord.y);
+                            focusByPosition(view2, new PointF(view2.sPinList.get(ret).x, view2.sPinList.get(ret).y));
+
+                            Toast.makeText(getApplicationContext(), "Nearest poi index is "
+                                    + ret + " " + view2.sPinList.get(ret).x + ", " + view2.sPinList.get(ret).y
+                                    + " from your touch (" + (int)sCoord.x + ", " + (int)sCoord.y, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    showAllCurrentPOILocation();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Single tap: Image not ready", Toast.LENGTH_SHORT).show();
+                }
+                return true;
+            }
+            @Override
+            public void onLongPress(MotionEvent e) {
+                if (view2.isReady()) {
+                    PointF sCoord = view2.viewToSourceCoord(e.getX(), e.getY());
+                    Toast.makeText(getApplicationContext(), "Long press: " + ((int)sCoord.x) + ", " + ((int)sCoord.y), Toast.LENGTH_SHORT).show();
+                    x = (int)sCoord.x;
+                    y = (int)sCoord.y;
+                    play(view2);
+
+                    PointF center = new PointF(x, y+20);
+                    View popupview2 = inflater.inflate(layout_for_always_on_top, null);
+                    mPopupWindow = new PopupWindow(popupview2, LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                    mPopupWindow.setFocusable(true);
+                    mPopupWindow.showAtLocation(popupview2, Gravity.CENTER, 123, 123);
+
+                } else {
+                    Toast.makeText(getApplicationContext(), "Long press: Image not ready", Toast.LENGTH_SHORT).show();
+                }
+            }
+            @Override
+            public boolean onDoubleTap(MotionEvent e) {
+                if (view2.isReady()) {
+                    PointF sCoord = view2.viewToSourceCoord(e.getX(), e.getY());
+                    Toast.makeText(getApplicationContext(), "Double tap: " + ((int)sCoord.x) + ", " + ((int)sCoord.y), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Double tap: Image not ready", Toast.LENGTH_SHORT).show();
+                }
+                return true;
             }
         });
+        view2.setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View view2, MotionEvent motionEvent) {
+                return gestureDetector2.onTouchEvent(motionEvent);
+            }
+        });
+
+        final GestureDetector gestureDetector3 = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
+            @Override
+            public boolean onSingleTapConfirmed(MotionEvent e) {
+                if (view3.isReady()) {
+                    PointF sCoord = view3.viewToSourceCoord(e.getX(), e.getY());
+                    x = (int)sCoord.x;
+                    y = (int)sCoord.y;
+
+                    int ret = nearestPOIFromAll(view3, sCoord.x, sCoord.y);
+                    if (ret != -1) {
+                        if (sCoord.x > view3.sPinList.get(ret).x && sCoord.x < view3.sPinList.get(ret).x + view3.poiBitmapList.get(ret).getWidth()
+                                && sCoord.y > view3.sPinList.get(ret).y && sCoord.y < view3.sPinList.get(ret).y + view3.poiBitmapList.get(ret).getHeight()) {
+                            Log.d("JYN", "Nearest poi index is " + ret + " " + view3.sPinList.get(ret).x + ", " + view3.sPinList.get(ret).y
+                                    + " from your touch (" + (int)sCoord.x + ", " + (int)sCoord.y);
+                            focusByPosition(view3, new PointF(view3.sPinList.get(ret).x, view3.sPinList.get(ret).y));
+
+                            Toast.makeText(getApplicationContext(), "Nearest poi index is "
+                                    + ret + " " + view3.sPinList.get(ret).x + ", " + view3.sPinList.get(ret).y
+                                    + " from your touch (" + (int)sCoord.x + ", " + (int)sCoord.y, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    showAllCurrentPOILocation();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Single tap: Image not ready", Toast.LENGTH_SHORT).show();
+                }
+                return true;
+            }
+            @Override
+            public void onLongPress(MotionEvent e) {
+                if (view3.isReady()) {
+                    PointF sCoord = view3.viewToSourceCoord(e.getX(), e.getY());
+                    Toast.makeText(getApplicationContext(), "Long press: " + ((int)sCoord.x) + ", " + ((int)sCoord.y), Toast.LENGTH_SHORT).show();
+                    x = (int)sCoord.x;
+                    y = (int)sCoord.y;
+                    play(view3);
+
+                    PointF center = new PointF(x, y+20);
+                    View popupview3 = inflater.inflate(layout_for_always_on_top, null);
+                    mPopupWindow = new PopupWindow(popupview3, LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                    mPopupWindow.setFocusable(true);
+                    mPopupWindow.showAtLocation(popupview3, Gravity.CENTER, 123, 123);
+
+                } else {
+                    Toast.makeText(getApplicationContext(), "Long press: Image not ready", Toast.LENGTH_SHORT).show();
+                }
+            }
+            @Override
+            public boolean onDoubleTap(MotionEvent e) {
+                if (view3.isReady()) {
+                    PointF sCoord = view3.viewToSourceCoord(e.getX(), e.getY());
+                    Toast.makeText(getApplicationContext(), "Double tap: " + ((int)sCoord.x) + ", " + ((int)sCoord.y), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Double tap: Image not ready", Toast.LENGTH_SHORT).show();
+                }
+                return true;
+            }
+        });
+        view3.setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                return gestureDetector3.onTouchEvent(motionEvent);
+            }
+        });
+
+        final GestureDetector gestureDetector4 = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
+            @Override
+            public boolean onSingleTapConfirmed(MotionEvent e) {
+                if (view4.isReady()) {
+                    PointF sCoord = view4.viewToSourceCoord(e.getX(), e.getY());
+                    x = (int)sCoord.x;
+                    y = (int)sCoord.y;
+
+                    int ret = nearestPOIFromAll(view4, sCoord.x, sCoord.y);
+                    if (ret != -1) {
+                        if (sCoord.x > view4.sPinList.get(ret).x && sCoord.x < view4.sPinList.get(ret).x + view4.poiBitmapList.get(ret).getWidth()
+                                && sCoord.y > view4.sPinList.get(ret).y && sCoord.y < view4.sPinList.get(ret).y + view4.poiBitmapList.get(ret).getHeight()) {
+                            Log.d("JYN", "Nearest poi index is " + ret + " " + view4.sPinList.get(ret).x + ", " + view4.sPinList.get(ret).y
+                                    + " from your touch (" + (int)sCoord.x + ", " + (int)sCoord.y);
+                            focusByPosition(view4, new PointF(view4.sPinList.get(ret).x, view4.sPinList.get(ret).y));
+
+                            Toast.makeText(getApplicationContext(), "Nearest poi index is "
+                                    + ret + " " + view4.sPinList.get(ret).x + ", " + view4.sPinList.get(ret).y
+                                    + " from your touch (" + (int)sCoord.x + ", " + (int)sCoord.y, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    showAllCurrentPOILocation();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Single tap: Image not ready", Toast.LENGTH_SHORT).show();
+                }
+                return true;
+            }
+            @Override
+            public void onLongPress(MotionEvent e) {
+                if (view4.isReady()) {
+                    PointF sCoord = view4.viewToSourceCoord(e.getX(), e.getY());
+                    Toast.makeText(getApplicationContext(), "Long press: " + ((int)sCoord.x) + ", " + ((int)sCoord.y), Toast.LENGTH_SHORT).show();
+                    x = (int)sCoord.x;
+                    y = (int)sCoord.y;
+                    play(view4);
+
+                    PointF center = new PointF(x, y+20);
+                    View popupview4 = inflater.inflate(layout_for_always_on_top, null);
+                    mPopupWindow = new PopupWindow(popupview4, LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                    mPopupWindow.setFocusable(true);
+                    mPopupWindow.showAtLocation(popupview4, Gravity.CENTER, 123, 123);
+
+                } else {
+                    Toast.makeText(getApplicationContext(), "Long press: Image not ready", Toast.LENGTH_SHORT).show();
+                }
+            }
+            @Override
+            public boolean onDoubleTap(MotionEvent e) {
+                if (view4.isReady()) {
+                    PointF sCoord = view4.viewToSourceCoord(e.getX(), e.getY());
+                    Toast.makeText(getApplicationContext(), "Double tap: " + ((int)sCoord.x) + ", " + ((int)sCoord.y), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Double tap: Image not ready", Toast.LENGTH_SHORT).show();
+                }
+                return true;
+            }
+        });
+        view4.setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                return gestureDetector4.onTouchEvent(motionEvent);
+            }
+        });
+
     }
 
     @Override
@@ -199,7 +398,7 @@ public class RecyclerViewActivity extends AbstractPagesActivity {
         }
     }
 
-    private void play() {
+    private void play(PinView view) {
         Random random = new Random();
         if (view.isReady()) {
             float maxScale = view.getMaxScale();
@@ -219,7 +418,7 @@ public class RecyclerViewActivity extends AbstractPagesActivity {
         }
     }
 
-    private void focusByPosition(PointF p) {
+    private void focusByPosition(PinView view, PointF p) {
         Random random = new Random();
         if (view.isReady()) {
             float maxScale = view.getMaxScale();
@@ -344,7 +543,7 @@ public class RecyclerViewActivity extends AbstractPagesActivity {
     }
     */
 
-    public int nearestPOIFromAll(float x, float y) { // touch position
+    public int nearestPOIFromAll(PinView view, float x, float y) { // touch position
         int ret = -1;
 
         double min = Double.MAX_VALUE;
@@ -370,6 +569,24 @@ public class RecyclerViewActivity extends AbstractPagesActivity {
 
     public void showAllCurrentPOILocation() {
         AtomicInteger i = new AtomicInteger();
-        view.sPinList.stream().forEach( x -> Log.d("JYN", "show all " + x + " " + i.getAndIncrement()));
+        view.sPinList.stream().forEach( x -> Log.d("JYN", "show all in view " + x + " " + i.getAndIncrement()));
+        view2.sPinList.stream().forEach( x -> Log.d("JYN", "show all in view2 " + x + " " + i.getAndIncrement()));
+        view3.sPinList.stream().forEach( x -> Log.d("JYN", "show all in view3 " + x + " " + i.getAndIncrement()));
+        view4.sPinList.stream().forEach( x -> Log.d("JYN", "show all in view4 " + x + " " + i.getAndIncrement()));
+
     }
+
+    /*
+    @BindingAdapter("items")
+    public static void setItems(RecyclerView recyclerView, ObservableArrayList<POI> listItemViewModels) {
+        ListViewAdapter adapter;
+        if (recyclerView.getAdapter() == null) {
+            adapter = new ListViewAdapter();
+            recyclerView.setAdapter(adapter);
+        } else { // getAdapter()가 있으면 위에서 생성한 adapter를 get
+            adapter = (ListViewAdapter)recyclerView.getAdapter();
+        }
+        adapter.updateItems(listItemViewModels);
+    }
+     */
 }
