@@ -23,6 +23,7 @@ import com.davemorrissey.labs.subscaleview.ImageSource;
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView.AnimationBuilder;
 import com.davemorrissey.labs.subscaleview.test.AbstractPagesActivity;
 import com.davemorrissey.labs.subscaleview.test.AbstractPagesActivity2;
+import com.davemorrissey.labs.subscaleview.test.BottomSheetDialog;
 import com.davemorrissey.labs.subscaleview.test.Page;
 import com.davemorrissey.labs.subscaleview.test.R;
 import com.davemorrissey.labs.subscaleview.test.R.id;
@@ -115,7 +116,6 @@ public class RecyclerViewActivity extends AbstractPagesActivity2 {
                     y = (int)sCoord.y;
                     //boolean check = isTouchingPOI(sCoord.x, sCoord.y);
 
-
                     int ret = nearestPOIFromAll(view, sCoord.x, sCoord.y);
                     if (ret != -1) {
                         Log.d("JYN", "Nearest ex : " + e.getX() + "  ey " + e.getY() );
@@ -125,22 +125,9 @@ public class RecyclerViewActivity extends AbstractPagesActivity2 {
                                 + (view.sPinList.get(ret).x - view.poiBitmapList.get(ret).getWidth()/2) + "  "
                                 + (view.sPinList.get(ret).x + view.poiBitmapList.get(ret).getWidth()/2));
 
-                        if (sCoord.x >= view.sPinList.get(ret).x - 2
-                                && sCoord.x <= view.sPinList.get(ret).x + 2
-                                && sCoord.y <= view.sPinList.get(ret).y + 2
-                                && sCoord.y >= view.sPinList.get(ret).y - 5) {
-
-                        /*
-                        if (sCoord.x >= view.sPinList.get(ret).x - view.poiBitmapList.get(ret).getWidth()/2
-                                && sCoord.x <= view.sPinList.get(ret).x + view.poiBitmapList.get(ret).getWidth()/2
-                                && sCoord.y <= view.sPinList.get(ret).y
-                                && sCoord.y >= view.sPinList.get(ret).y - view.poiBitmapList.get(ret).getHeight()) {
-                         */
-                        //if (Math.abs(sCoord.x - view.sPinList.get(ret).x) < 30 && Math.abs(sCoord.y - view.sPinList.get(ret).y) < 30) {
-                            //                if ( x > dx && x < dx + (int)width && y > dy && y < dy + (int)height ) {
+                        if (checkBitMapTouched(view, ret, e.getX(), e.getY())) {
                             Log.d("JYN", "inside");
                             focusByPosition(view, new PointF(view.sPinList.get(ret).x, view.sPinList.get(ret).y));
-
                             Toast.makeText(getApplicationContext(), "Nearest poi index is "
                                     + ret + " " + view.sPinList.get(ret).x + ", " + view.sPinList.get(ret).y
                                     + " from your touch (" + (int)sCoord.x + ", " + (int)sCoord.y, Toast.LENGTH_SHORT).show();
@@ -164,6 +151,15 @@ public class RecyclerViewActivity extends AbstractPagesActivity2 {
 
                     PointF center = new PointF(x, y+20);
                     View popupView = inflater.inflate(layout_for_always_on_top, null);
+                    ImageView shareImage = popupView.findViewById(id.add);
+                    shareImage.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Toast.makeText(RecyclerViewActivity.this, "아이스크림", Toast.LENGTH_SHORT).show();
+                            BottomSheetDialog bottomSheet = new BottomSheetDialog();
+                            bottomSheet.show(getSupportFragmentManager(), "ModalBottomSheet");
+                        }
+                    });
                     mPopupWindow = new PopupWindow(popupView, LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                     //view.setPopupWindow(popupView, mPopupWindow, center);
 
@@ -205,12 +201,10 @@ public class RecyclerViewActivity extends AbstractPagesActivity2 {
 
                     int ret = nearestPOIFromAll(view2, sCoord.x, sCoord.y);
                     if (ret != -1) {
-                        if (sCoord.x > view2.sPinList.get(ret).x && sCoord.x < view2.sPinList.get(ret).x + view2.poiBitmapList.get(ret).getWidth()
-                                && sCoord.y > view2.sPinList.get(ret).y && sCoord.y < view2.sPinList.get(ret).y + view2.poiBitmapList.get(ret).getHeight()) {
+                        if (checkBitMapTouched(view2, ret, e.getX(), e.getY())) {
                             Log.d("JYN", "Nearest poi index is " + ret + " " + view2.sPinList.get(ret).x + ", " + view2.sPinList.get(ret).y
                                     + " from your touch (" + (int)sCoord.x + ", " + (int)sCoord.y);
                             focusByPosition(view2, new PointF(view2.sPinList.get(ret).x, view2.sPinList.get(ret).y));
-
                             Toast.makeText(getApplicationContext(), "Nearest poi index is "
                                     + ret + " " + view2.sPinList.get(ret).x + ", " + view2.sPinList.get(ret).y
                                     + " from your touch (" + (int)sCoord.x + ", " + (int)sCoord.y, Toast.LENGTH_SHORT).show();
@@ -269,12 +263,10 @@ public class RecyclerViewActivity extends AbstractPagesActivity2 {
 
                     int ret = nearestPOIFromAll(view3, sCoord.x, sCoord.y);
                     if (ret != -1) {
-                        if (sCoord.x > view3.sPinList.get(ret).x && sCoord.x < view3.sPinList.get(ret).x + view3.poiBitmapList.get(ret).getWidth()
-                                && sCoord.y > view3.sPinList.get(ret).y && sCoord.y < view3.sPinList.get(ret).y + view3.poiBitmapList.get(ret).getHeight()) {
+                        if (checkBitMapTouched(view3, ret, e.getX(), e.getY())) {
                             Log.d("JYN", "Nearest poi index is " + ret + " " + view3.sPinList.get(ret).x + ", " + view3.sPinList.get(ret).y
                                     + " from your touch (" + (int)sCoord.x + ", " + (int)sCoord.y);
                             focusByPosition(view3, new PointF(view3.sPinList.get(ret).x, view3.sPinList.get(ret).y));
-
                             Toast.makeText(getApplicationContext(), "Nearest poi index is "
                                     + ret + " " + view3.sPinList.get(ret).x + ", " + view3.sPinList.get(ret).y
                                     + " from your touch (" + (int)sCoord.x + ", " + (int)sCoord.y, Toast.LENGTH_SHORT).show();
@@ -333,12 +325,10 @@ public class RecyclerViewActivity extends AbstractPagesActivity2 {
 
                     int ret = nearestPOIFromAll(view4, sCoord.x, sCoord.y);
                     if (ret != -1) {
-                        if (sCoord.x > view4.sPinList.get(ret).x && sCoord.x < view4.sPinList.get(ret).x + view4.poiBitmapList.get(ret).getWidth()
-                                && sCoord.y > view4.sPinList.get(ret).y && sCoord.y < view4.sPinList.get(ret).y + view4.poiBitmapList.get(ret).getHeight()) {
+                        if (checkBitMapTouched(view4, ret, e.getX(), e.getY())) {
                             Log.d("JYN", "Nearest poi index is " + ret + " " + view4.sPinList.get(ret).x + ", " + view4.sPinList.get(ret).y
                                     + " from your touch (" + (int)sCoord.x + ", " + (int)sCoord.y);
                             focusByPosition(view4, new PointF(view4.sPinList.get(ret).x, view4.sPinList.get(ret).y));
-
                             Toast.makeText(getApplicationContext(), "Nearest poi index is "
                                     + ret + " " + view4.sPinList.get(ret).x + ", " + view4.sPinList.get(ret).y
                                     + " from your touch (" + (int)sCoord.x + ", " + (int)sCoord.y, Toast.LENGTH_SHORT).show();
@@ -589,4 +579,17 @@ public class RecyclerViewActivity extends AbstractPagesActivity2 {
         adapter.updateItems(listItemViewModels);
     }
      */
+
+    public boolean checkBitMapTouched(PinView view, int index, float x, float y) {
+        float bitmapLBound = view.sourceToViewX(view.sPinList.get(index).x) - view.poiBitmapList.get(index).getWidth()/2;
+        float bitmapRBound = view.sourceToViewX(view.sPinList.get(index).x) + view.poiBitmapList.get(index).getWidth()/2;
+        float bitmapTBound = view.sourceToViewY(view.sPinList.get(index).y) - view.poiBitmapList.get(index).getHeight();
+        float bitmapBBound = view.sourceToViewY(view.sPinList.get(index).y);
+        if (x >= bitmapLBound && x <= bitmapRBound
+                && y <= bitmapBBound && y >= bitmapTBound) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <variable
+            name="viewModel"
+            type="com.davemorrissey.labs.subscaleview.test.viewmodel.POIGroupSelectViewModel" />
+    </data>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:id="@+id/layout_bottom_sheet"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:weightSum="5">
+
+            <Button
+                android:id="@+id/addNewGroup"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:text="새로운 Group 추가"
+                android:onClick="@{(view)->viewModel.addNewPOIGroup(view)}"/>
+            <Button
+                android:id="@+id/addNewGroup2"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:text="새로운 Group 추가"
+                android:onClick="@{(view)->viewModel.addNewPOIGroup(view)}"/>
+            <Button
+                android:id="@+id/addNewGroup3"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:text="새로운 Group 추가"
+                android:onClick="@{(view)->viewModel.addNewPOIGroup(view)}"/>
+            <Button
+                android:id="@+id/addNewGroup4"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:text="새로운 Group 추가"
+                android:onClick="@{(view)->viewModel.addNewPOIGroup(view)}"/>
+            <Button
+                android:id="@+id/addNewGroup5"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:text="새로운 Group 추가"
+                android:onClick="@{(view)->viewModel.addNewPOIGroup(view)}"/>
+            <!--
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="4"
+                android:scrollbars="vertical"
+                app:items="@{viewModel.poiGroupList}"
+                app:layoutManager="GridLayoutManager"
+                app:spanCount="2" />
+            -->
+
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
